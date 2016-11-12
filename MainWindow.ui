@@ -173,7 +173,7 @@
        <item row="2" column="0">
         <widget class="QLabel" name="label_10">
          <property name="text">
-          <string>V&amp;ievport</string>
+          <string>V&amp;iewport</string>
          </property>
          <property name="buddy">
           <cstring>leViewport</cstring>
