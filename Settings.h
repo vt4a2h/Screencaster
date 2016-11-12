@@ -40,7 +40,8 @@ namespace sc {
 
         friend QTextStream &operator <<(QTextStream &out, AudioSettings const & s)
         {
-            return out << "-f pulse"
+            return out << "-f "       << "pulse"
+                       << " -i "      << "default"
                        << " -ac "     << s.channelsCount
                        << " -acodec " << s.audioCodec;
         }

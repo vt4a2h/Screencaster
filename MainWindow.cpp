@@ -14,7 +14,7 @@ namespace
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , mIcon(new QSystemTrayIcon(QIcon(":/icons/pic/play.png")))
+    , mIcon(new QSystemTrayIcon(QIcon(":/icons/pic/start.png")))
     , mState(State::Default)
     , mScreencaster(new sc::Screencaster)
 {
