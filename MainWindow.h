@@ -3,6 +3,7 @@
 #include <memory>
 
 #include <QMainWindow>
+#include <QSystemTrayIcon>
 
 #include "Settings.h"
 
@@ -14,42 +15,45 @@ namespace sc {
     class Screencaster;
 }
 
-class QSystemTrayIcon;
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    Q_PROPERTY(State mState READ state WRITE setState NOTIFY stateChanged)
-    Q_ENUMS(State)
+    Q_PROPERTY(ProcessState mState READ state WRITE setState NOTIFY stateChanged)
+    Q_ENUMS(ProcessState)
 
 public: // Types
-    enum class State {Default, Proccess};
+    enum class ProcessState {Default, Proccess};
 
 public: // Methods
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 signals:
-    void stateChanged(State mState);
+    void stateChanged(ProcessState mState);
 
 private slots:
-    void onStateChanged(State current);
+    void onProcessStateChanged(ProcessState current);
+    void onChooseOutputClicked();
+    void onTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
+    void toggleState();
 
 private:
     std::unique_ptr<Ui::MainWindow> ui;
 
-    std::unique_ptr<QSystemTrayIcon> mIcon;
+    std::unique_ptr<QSystemTrayIcon> mTrayIcon;
 
-    State mState;
+    ProcessState mState;
     std::unique_ptr<sc::Screencaster> mScreencaster;
 
     void configure();
 
-    void setState(State mState);
-    State state() const;
+    void setState(ProcessState mState);
+    ProcessState state() const;
 
     void start();
     void stop();
 
     sc::Settings readSettings();
+
+    void enableSettingsWidgets(bool enable = true);
 };

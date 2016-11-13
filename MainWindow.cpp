@@ -1,7 +1,8 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
-#include <QSystemTrayIcon>
+#include <QFileDialog>
+#include <QMenu>
 
 #include "Screencaster.h"
 
@@ -14,8 +15,8 @@ namespace
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , mIcon(new QSystemTrayIcon(QIcon(":/icons/pic/start.png")))
-    , mState(State::Default)
+    , mTrayIcon(new QSystemTrayIcon(QIcon(":/icons/pic/start.png")))
+    , mState(ProcessState::Default)
     , mScreencaster(new sc::Screencaster)
 {
     ui->setupUi(this);
@@ -27,21 +28,35 @@ MainWindow::~MainWindow()
 {
 }
 
-MainWindow::State MainWindow::state() const
+MainWindow::ProcessState MainWindow::state() const
 {
     return mState;
 }
 
+void MainWindow::toggleState()
+{
+    setState(state() == ProcessState::Default ? ProcessState::Proccess : ProcessState::Default);
+}
+
 void MainWindow::start()
 {
+    // Remove previous output if needed
+    if (ui->cbOverwriteOutputFile->isChecked()) {
+        QFile output(ui->leOutput->text());
+        if (output.exists())
+            output.remove();
+    }
+
+    // Start recording
     mScreencaster->setSettings(readSettings());
     mScreencaster->start();
 
+    // Check errors
     auto errors = mScreencaster->errors();
-    if (errors.isEmpty())
-    {
+    if (errors.isEmpty()) {
         ui->btnStartStop->setText(tr("&Stop"));
-        mIcon->setIcon(QIcon(":/icons/pic/stop.png"));
+        mTrayIcon->setIcon(QIcon(":/icons/pic/stop.png"));
+        enableSettingsWidgets(false);
     }
 }
 
@@ -49,7 +64,8 @@ void MainWindow::stop()
 {
     mScreencaster->stop();
     ui->btnStartStop->setText(tr("&Start"));
-    mIcon->setIcon(QIcon(":/icons/pic/start.png"));
+    mTrayIcon->setIcon(QIcon(":/icons/pic/start.png"));
+    enableSettingsWidgets(true);
 }
 
 sc::Settings MainWindow::readSettings()
@@ -64,7 +80,15 @@ sc::Settings MainWindow::readSettings()
     return sc::Settings { vs, as, ui->leOutput->text() };
 }
 
-void MainWindow::setState(MainWindow::State state)
+void MainWindow::enableSettingsWidgets(bool enable)
+{
+    ui->gbVideoSettings->setEnabled(enable);
+    ui->gbGeometry->setEnabled(enable);
+    ui->gbAudioSettings->setEnabled(enable);
+    ui->gbOutput->setEnabled(enable);
+}
+
+void MainWindow::setState(MainWindow::ProcessState state)
 {
     if (mState != state) {
         mState = state;
@@ -77,24 +101,50 @@ void MainWindow::configure()
     ui->leQuality->setValidator(new QIntValidator(minQuality, maxQuality, this));
     ui->btnStartStop->setFocus();
 
-    mIcon->show();
+    mTrayIcon->show();
+    auto menu = new QMenu(this);
+    menu->addAction(tr("Hide"), [this, menu = menu] {
+        if (isVisible()) {
+            hide();
+            menu->actions()[0]->setText(tr("Show"));
+        } else {
+            show();
+            menu->actions()[0]->setText(tr("Hide"));
+        }
+    });
+    mTrayIcon->setContextMenu(menu);
 
-    connect(ui->btnStartStop, &QPushButton::clicked, this,
-            [this](){ setState(state() == State::Default ? State::Proccess : State::Default); });
-    connect(this, &MainWindow::stateChanged, this, &MainWindow::onStateChanged);
+
+    connect(ui->btnStartStop,   &QPushButton::clicked,       this, &MainWindow::toggleState);
+    connect(this,               &MainWindow::stateChanged,   this, &MainWindow::onProcessStateChanged);
+    connect(ui->tbChooseOutput, &QToolButton::clicked,       this, &MainWindow::onChooseOutputClicked);
+    connect(mTrayIcon.get(),    &QSystemTrayIcon::activated, this, &MainWindow::onTrayIconActivated);
 }
 
-void MainWindow::onStateChanged(MainWindow::State current)
+void MainWindow::onProcessStateChanged(MainWindow::ProcessState current)
 {
     switch (current) {
-        case State::Default:
+        case ProcessState::Default:
             stop();
             break;
 
-        case State::Proccess:
+        case ProcessState::Proccess:
             start();
             break;
 
         default: ;
     }
+}
+
+void MainWindow::onChooseOutputClicked()
+{
+    auto file = QFileDialog::getSaveFileName(this, tr("Specify output file"), QDir::homePath());
+    if (!file.isEmpty())
+        ui->leOutput->setText(file);
+}
+
+void MainWindow::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    if (reason == QSystemTrayIcon::Trigger)
+        toggleState();
 }
