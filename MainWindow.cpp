@@ -39,10 +39,10 @@ namespace
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-    , mTrayIcon(new QSystemTrayIcon(QIcon(":/icons/pic/start.png")))
+    , ui(std::make_unique<Ui::MainWindow>())
+    , mTrayIcon(std::make_unique<QSystemTrayIcon>(QIcon(":/icons/pic/start.png")))
     , mState(ProcessState::Default)
-    , mScreencaster(new sc::Screencaster)
+    , mScreencaster(std::make_unique<sc::Screencaster>())
 {
     ui->setupUi(this);
 
@@ -129,13 +129,8 @@ void MainWindow::configure()
     mTrayIcon->show();
     auto menu = new QMenu(this);
     menu->addAction(tr("Hide"), [this, menu = menu] {
-        if (isVisible()) {
-            hide();
-            menu->actions()[0]->setText(tr("Show"));
-        } else {
-            show();
-            menu->actions()[0]->setText(tr("Hide"));
-        }
+        setVisible(!isVisible());
+        menu->actions()[0]->setText(isVisible() ? tr("Show") : tr("Hide"));
     });
     mTrayIcon->setContextMenu(menu);
 

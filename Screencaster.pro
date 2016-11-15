@@ -24,6 +24,7 @@ HEADERS  += MainWindow.h \
 FORMS    += MainWindow.ui
 
 CONFIG += c++14
+QMAKE_CXX = g++-6
 
 RESOURCES += \
     main.qrc
