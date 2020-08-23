@@ -73,7 +73,7 @@ private:
     void configure();
 
     void setState(ProcessState mState);
-    ProcessState state() const;
+    [[nodiscard]] ProcessState state() const;
 
     void start();
     void stop();
