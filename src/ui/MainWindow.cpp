@@ -127,10 +127,12 @@ void MainWindow::configure()
     ui->btnStartStop->setFocus();
 
     mTrayIcon->show();
+
     auto menu = new QMenu(this);
-    menu->addAction(tr("Hide"), [this, menu = menu] {
+    auto hideAction = menu->addAction(tr("Hide"));
+    connect(hideAction, &QAction::triggered, this, [this, hideAction] {
+        hideAction->setText(isVisible() ? tr("Show") : tr("Hide"));
         setVisible(!isVisible());
-        menu->actions()[0]->setText(isVisible() ? tr("Show") : tr("Hide"));
     });
 
     auto quitAction = menu->addAction(tr("Quit"));
