@@ -47,7 +47,7 @@ class MainWindow : public QMainWindow
     Q_ENUMS(ProcessState)
 
 public: // Types
-    enum class ProcessState {Default, Proccess};
+    enum class ProcessState {Default, Process};
 
 public: // Methods
     explicit MainWindow(QWidget *parent = 0);

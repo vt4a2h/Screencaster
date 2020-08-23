@@ -60,7 +60,7 @@ MainWindow::ProcessState MainWindow::state() const
 
 void MainWindow::toggleState()
 {
-    setState(state() == ProcessState::Default ? ProcessState::Proccess : ProcessState::Default);
+    setState(state() == ProcessState::Default ? ProcessState::Process : ProcessState::Default);
 }
 
 void MainWindow::start()
@@ -154,7 +154,7 @@ void MainWindow::onProcessStateChanged(MainWindow::ProcessState current)
             stop();
             break;
 
-        case ProcessState::Proccess:
+        case ProcessState::Process:
             start();
             break;
 
