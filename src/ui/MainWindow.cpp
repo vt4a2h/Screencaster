@@ -49,9 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
     configure();
 }
 
-MainWindow::~MainWindow()
-{
-}
+MainWindow::~MainWindow() = default;
 
 MainWindow::ProcessState MainWindow::state() const
 {
