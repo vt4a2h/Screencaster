@@ -27,7 +27,7 @@
 
 #include <memory>
 
-#include <QMainWindow>
+#include <QtWidgets/QMainWindow>
 #include <QSystemTrayIcon>
 
 #include "Settings.h"

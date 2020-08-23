@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>282</width>
-    <height>517</height>
+    <height>608</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,7 @@
        <item row="0" column="1">
         <widget class="QLineEdit" name="leFPS">
          <property name="text">
-          <string>30</string>
+          <string>60</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -143,7 +143,7 @@
        <item row="0" column="1">
         <widget class="QLineEdit" name="leWidth">
          <property name="text">
-          <string>1920</string>
+          <string>3840</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -163,7 +163,7 @@
        <item row="1" column="1">
         <widget class="QLineEdit" name="leHeight">
          <property name="text">
-          <string>1080</string>
+          <string>2160</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
