@@ -51,7 +51,7 @@ public: // Types
 
 public: // Methods
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    ~MainWindow() override;
 
 signals:
     void stateChanged(ProcessState mState);
