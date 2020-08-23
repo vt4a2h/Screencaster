@@ -132,6 +132,10 @@ void MainWindow::configure()
         setVisible(!isVisible());
         menu->actions()[0]->setText(isVisible() ? tr("Show") : tr("Hide"));
     });
+
+    auto quitAction = menu->addAction(tr("Quit"));
+    connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+
     mTrayIcon->setContextMenu(menu);
 
 
